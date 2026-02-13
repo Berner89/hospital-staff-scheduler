@@ -1,0 +1,1298 @@
+/* ============================================
+   STAFF SCHEDULER - STYLES
+   Clean SaaS UI + Print-optimized Roster
+   ============================================ */
+
+/* CSS Variables */
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary: #64748b;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+
+    /* Shift Colors */
+    --shift-d: #f5a623;
+    --shift-e: #f5a623;
+    --shift-n: #f5a623;
+    --shift-s: #f5a623;
+    --shift-f: #f5a623;
+    --shift-b: #22c55e;
+    --shift-a: #3b82f6;
+    --shift-leave: #ef4444;
+    --shift-tad: #a855f7;
+    --shift-off: transparent;
+
+    --sidebar-width: 380px;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* Layout */
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Config Panel */
+.config-panel {
+    width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+}
+
+.config-panel.collapsed {
+    width: 50px;
+    overflow: hidden;
+}
+
+.config-panel.collapsed .config-section,
+.config-panel.collapsed .config-actions,
+.config-panel.collapsed .panel-header h2 {
+    display: none;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 10;
+}
+
+.panel-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.config-section {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.config-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+}
+
+.config-actions {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Form Elements */
+.form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group {
+    margin-bottom: 0.75rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.radio-label,
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.radio-label input,
+.checkbox-label input {
+    accent-color: var(--primary);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #475569;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: var(--background);
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+/* Section Divider */
+.section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0.75rem 0;
+}
+
+/* Rotation Pattern Info */
+.pattern-info {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 0.625rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+}
+
+.pattern-info.warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.pattern-info .pattern-title {
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 0.25rem;
+}
+
+.pattern-info.warning .pattern-title {
+    color: #92400e;
+}
+
+.pattern-info .pattern-desc {
+    color: #15803d;
+    line-height: 1.4;
+}
+
+.pattern-info.warning .pattern-desc {
+    color: #a16207;
+}
+
+.pattern-visual {
+    display: flex;
+    gap: 2px;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.pattern-day {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.pattern-day.on {
+    background: #22c55e;
+    color: white;
+}
+
+.pattern-day.off {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Shifts List */
+.shifts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.shift-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--background);
+    border-radius: 6px;
+    font-size: 0.813rem;
+}
+
+.shift-item .shift-code {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+}
+
+.shift-item .shift-info {
+    flex: 1;
+}
+
+.shift-item .shift-times {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.shift-item .shift-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.shift-item button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+}
+
+/* Staff Presets */
+.staff-presets {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.preset-row {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.preset-row select {
+    flex: 1;
+}
+
+.preset-save-row {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.preset-save-row input {
+    flex: 1;
+}
+
+/* Groups List */
+.groups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.group-item {
+    background: var(--background);
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.group-header input {
+    flex: 1;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.employees-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.employee-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    background: var(--surface);
+    border-radius: 4px;
+    font-size: 0.813rem;
+}
+
+.employee-item input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.813rem;
+}
+
+.employee-item input:focus {
+    outline: none;
+}
+
+.employee-item .unavail-indicator {
+    font-size: 0.7rem;
+    color: var(--danger);
+    cursor: pointer;
+}
+
+/* Coverage Grid */
+.coverage-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.coverage-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.coverage-row .shift-badge {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+}
+
+.coverage-row label {
+    flex: 1;
+    font-size: 0.75rem;
+}
+
+.coverage-row input {
+    width: 50px;
+    text-align: center;
+}
+
+/* Schedule Container */
+.schedule-container {
+    flex: 1;
+    overflow: auto;
+    padding: 1.5rem;
+    background: var(--background);
+}
+
+.schedule-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.action-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.print-hint {
+    cursor: help;
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+.print-hint:hover {
+    opacity: 1;
+}
+
+/* Warnings Panel */
+.warnings-panel {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.warnings-panel h4 {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: #92400e;
+}
+
+.warnings-panel ul {
+    list-style: none;
+    font-size: 0.813rem;
+    color: #92400e;
+}
+
+.warnings-panel li {
+    padding: 0.25rem 0;
+}
+
+.warnings-panel li::before {
+    content: "• ";
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state .hint {
+    font-size: 0.813rem;
+    margin-top: 1rem;
+}
+
+/* Schedule Output - Roster Grid */
+.schedule-output {
+    background: var(--surface);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.roster-wrapper {
+    overflow-x: auto;
+}
+
+.roster-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--text);
+}
+
+.roster-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.05em;
+    background: linear-gradient(90deg, #1e3a5f, #2d5a87);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.roster-period {
+    font-size: 1.25rem;
+    color: var(--text);
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+/* Roster Table */
+.roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    table-layout: fixed;
+}
+
+.roster-table th,
+.roster-table td {
+    border: 1px solid #cbd5e1;
+    padding: 2px 4px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.roster-table th {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+
+/* Day Numbers Row */
+.roster-table .day-numbers th {
+    background: #1e3a5f;
+    color: white;
+    font-size: 0.813rem;
+    padding: 4px;
+}
+
+.roster-table .day-numbers th.weekend {
+    background: #dc2626;
+}
+
+/* Day Names Row */
+.roster-table .day-names th {
+    background: #334155;
+    color: white;
+    font-size: 0.7rem;
+    padding: 3px;
+}
+
+.roster-table .day-names th.weekend {
+    background: #b91c1c;
+}
+
+/* Staff Column */
+.roster-table .staff-col {
+    width: 100px;
+    min-width: 100px;
+    text-align: left;
+    padding-left: 8px;
+    font-weight: 500;
+}
+
+/* Totals Columns */
+.roster-table .totals-col {
+    width: 28px;
+    min-width: 28px;
+    background: #f8fafc;
+}
+
+.roster-table .totals-header {
+    background: #0ea5e9;
+    color: white;
+    font-size: 0.7rem;
+}
+
+.roster-table .total-main {
+    background: #fef3c7;
+    font-weight: 600;
+}
+
+/* Group Header Row */
+.roster-table .group-row td {
+    background: #64748b;
+    color: white;
+    font-weight: 700;
+    text-align: left;
+    padding: 4px 8px;
+    font-size: 0.813rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Employee Row */
+.roster-table .employee-row td {
+    height: 26px;
+}
+
+.roster-table .employee-row .staff-col {
+    background: #f8fafc;
+}
+
+/* Shift Cells */
+.roster-table .shift-cell {
+    cursor: pointer;
+    transition: opacity 0.15s;
+    font-weight: 600;
+    text-transform: lowercase;
+    min-width: 24px;
+}
+
+.roster-table .shift-cell:hover {
+    opacity: 0.8;
+}
+
+.roster-table .shift-cell.shift-d,
+.roster-table .shift-cell.shift-e,
+.roster-table .shift-cell.shift-n,
+.roster-table .shift-cell.shift-s,
+.roster-table .shift-cell.shift-f {
+    background: #f5a623;
+    color: #000;
+}
+
+.roster-table .shift-cell.shift-b {
+    background: #22c55e;
+    color: white;
+}
+
+.roster-table .shift-cell.shift-a {
+    background: #3b82f6;
+    color: white;
+}
+
+.roster-table .shift-cell.shift-leave {
+    background: #ef4444;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 500;
+}
+
+.roster-table .shift-cell.shift-tad {
+    background: #a855f7;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 500;
+}
+
+/* Coverage Footer */
+.roster-table .coverage-section td {
+    background: #f1f5f9;
+}
+
+.roster-table .coverage-row-header {
+    background: #e2e8f0 !important;
+    text-align: left;
+    padding-left: 8px;
+}
+
+.roster-table .coverage-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.roster-table .coverage-required {
+    font-size: 0.7rem;
+}
+
+.roster-table .coverage-met {
+    background: #dcfce7;
+}
+
+.roster-table .coverage-under {
+    background: #fecaca;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.roster-table .coverage-over {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Legend */
+.roster-legend {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.75rem;
+    background: #f8fafc;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.legend-badge {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: white;
+}
+
+.legend-badge.shift-d,
+.legend-badge.shift-e,
+.legend-badge.shift-n,
+.legend-badge.shift-s,
+.legend-badge.shift-f {
+    background: #f5a623;
+    color: #000;
+}
+
+.legend-badge.shift-b {
+    background: #22c55e;
+}
+
+.legend-badge.shift-a {
+    background: #3b82f6;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-sm {
+    max-width: 320px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 1.25rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Shift Buttons in Cell Modal */
+.shift-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.shift-btn {
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.shift-btn:hover {
+    border-color: var(--primary);
+}
+
+.shift-btn .code {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.shift-btn .label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.shift-btn.active {
+    border-color: var(--primary);
+    background: rgba(37, 99, 235, 0.1);
+}
+
+/* Unavailability Section */
+.section-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.unavailability-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.unavail-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.625rem;
+    background: var(--background);
+    border-radius: 6px;
+    border-left: 3px solid var(--danger);
+}
+
+.unavail-entry.tad {
+    border-left-color: #a855f7;
+}
+
+.unavail-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.unavail-entry-header select {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.unavail-entry-header .employee-select {
+    flex: 2;
+}
+
+.unavail-entry-dates {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.unavail-entry-dates input {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.unavail-entry-dates span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.unavail-empty {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.813rem;
+    background: var(--background);
+    border-radius: 6px;
+}
+
+/* Unavailability List (in modal - keep for backwards compat) */
+.unavailability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.unavail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--background);
+    border-radius: 6px;
+}
+
+.unavail-item select,
+.unavail-item input {
+    flex: 1;
+    font-size: 0.75rem;
+}
+
+/* Period Config */
+.period-config {
+    margin-top: 0.75rem;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    /* Force background colors to print */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    body {
+        background: white;
+        font-size: 10pt;
+    }
+
+    .app-header,
+    .config-panel,
+    .schedule-actions,
+    .warnings-panel,
+    .modal {
+        display: none !important;
+    }
+
+    .schedule-container {
+        padding: 0;
+        overflow: visible;
+    }
+
+    .schedule-output {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .roster-wrapper {
+        overflow: visible;
+    }
+
+    .roster-header {
+        padding: 0.5cm;
+    }
+
+    .roster-title {
+        font-size: 18pt;
+        color: #1e3a5f !important;
+        -webkit-text-fill-color: #1e3a5f !important;
+        background: none !important;
+    }
+
+    .roster-period {
+        font-size: 14pt;
+    }
+
+    .roster-table {
+        font-size: 8pt;
+    }
+
+    .roster-table th,
+    .roster-table td {
+        padding: 2px 3px;
+    }
+
+    /* Ensure header rows keep their colors */
+    .roster-table .day-numbers th {
+        background: #1e3a5f !important;
+        color: white !important;
+    }
+
+    .roster-table .day-numbers th.weekend {
+        background: #dc2626 !important;
+    }
+
+    .roster-table .day-names th {
+        background: #334155 !important;
+        color: white !important;
+    }
+
+    .roster-table .day-names th.weekend {
+        background: #b91c1c !important;
+    }
+
+    /* Ensure shift cells keep their colors */
+    .roster-table .shift-cell {
+        font-size: 8pt;
+    }
+
+    .roster-table .shift-cell.shift-d,
+    .roster-table .shift-cell.shift-e,
+    .roster-table .shift-cell.shift-n,
+    .roster-table .shift-cell.shift-s,
+    .roster-table .shift-cell.shift-f {
+        background: #f5a623 !important;
+        color: #000 !important;
+    }
+
+    .roster-table .shift-cell.shift-b {
+        background: #22c55e !important;
+        color: white !important;
+    }
+
+    .roster-table .shift-cell.shift-a {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .roster-table .shift-cell.shift-leave {
+        background: #ef4444 !important;
+        color: white !important;
+        font-size: 6pt;
+    }
+
+    .roster-table .shift-cell.shift-tad {
+        background: #a855f7 !important;
+        color: white !important;
+        font-size: 6pt;
+    }
+
+    /* Group header rows */
+    .roster-table .group-row td {
+        background: #64748b !important;
+        color: white !important;
+    }
+
+    /* Totals columns */
+    .roster-table .totals-header {
+        background: #0ea5e9 !important;
+        color: white !important;
+    }
+
+    .roster-table .total-main {
+        background: #fef3c7 !important;
+    }
+
+    /* Coverage footer */
+    .roster-table .coverage-met {
+        background: #dcfce7 !important;
+    }
+
+    .roster-table .coverage-under {
+        background: #fecaca !important;
+        color: #991b1b !important;
+    }
+
+    .roster-table .coverage-over {
+        background: #fef3c7 !important;
+        color: #92400e !important;
+    }
+
+    /* Legend badges */
+    .legend-badge {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .legend-badge.shift-d,
+    .legend-badge.shift-e,
+    .legend-badge.shift-n,
+    .legend-badge.shift-s,
+    .legend-badge.shift-f {
+        background: #f5a623 !important;
+        color: #000 !important;
+    }
+
+    .legend-badge.shift-b {
+        background: #22c55e !important;
+        color: white !important;
+    }
+
+    .legend-badge.shift-a {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .roster-legend {
+        font-size: 8pt;
+        padding: 0.25cm 0.5cm;
+        background: #f8fafc !important;
+    }
+
+    /* Compact Mode */
+    .compact-mode .roster-table {
+        font-size: 7pt;
+    }
+
+    .compact-mode .roster-table th,
+    .compact-mode .roster-table td {
+        padding: 1px 2px;
+    }
+
+    .compact-mode .roster-header {
+        padding: 0.25cm;
+    }
+
+    .compact-mode .roster-title {
+        font-size: 14pt;
+    }
+
+    .compact-mode .roster-period {
+        font-size: 11pt;
+    }
+
+    @page {
+        size: landscape;
+        margin: 0.5cm;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .config-panel {
+        width: 320px;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .config-panel {
+        width: 100%;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+}

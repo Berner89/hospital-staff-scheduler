@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Scheduler - Roster Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>Staff Scheduler</h1>
+                <p class="subtitle">Generate professional rosters for any industry</p>
+            </div>
+            <div class="header-actions">
+                <button id="loadExampleBtn" class="btn btn-secondary">Load Hospital ED Example</button>
+                <button id="clearAllBtn" class="btn btn-outline">Clear All</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Configuration Panel -->
+            <aside class="config-panel" id="configPanel">
+                <div class="panel-header">
+                    <h2>Schedule Configuration</h2>
+                    <button id="toggleConfig" class="btn-icon" title="Collapse">▼</button>
+                </div>
+
+                <!-- Industry Selection -->
+                <section class="config-section">
+                    <h3>1. Industry</h3>
+                    <select id="industrySelect" class="form-control">
+                        <option value="healthcare">Healthcare (Hospital)</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="public_safety">Public Safety</option>
+                        <option value="retail">Retail</option>
+                        <option value="other">Other</option>
+                    </select>
+                </section>
+
+                <!-- Time Period -->
+                <section class="config-section">
+                    <h3>2. Time Period</h3>
+                    <div class="form-group">
+                        <label>Department/Team Name</label>
+                        <input type="text" id="departmentName" class="form-control" placeholder="e.g., Emergency Department">
+                    </div>
+                    <div class="form-group">
+                        <label>Calendar Style</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="calendarStyle" value="monthly" checked> Monthly Roster
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="calendarStyle" value="daterange"> Date Range
+                            </label>
+                        </div>
+                    </div>
+                    <div id="monthlyConfig" class="period-config">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Month</label>
+                                <select id="monthSelect" class="form-control">
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4" selected>May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year</label>
+                                <input type="number" id="yearInput" class="form-control" value="2025" min="2020" max="2030">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dateRangeConfig" class="period-config hidden">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="startDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <select id="durationSelect" class="form-control">
+                                <option value="7">1 Week</option>
+                                <option value="14" selected>2 Weeks</option>
+                                <option value="28">4 Weeks</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Coverage -->
+                <section class="config-section">
+                    <h3>3. Coverage Requirements</h3>
+                    <div class="form-group">
+                        <label>Preset</label>
+                        <select id="coveragePreset" class="form-control">
+                            <option value="24_7">24/7 Coverage</option>
+                            <option value="8x5">8x5 (Weekdays)</option>
+                            <option value="12x7">12x7</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div id="coverageGrid" class="coverage-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Shifts -->
+                <section class="config-section">
+                    <h3>4. Shift Definitions</h3>
+
+                    <!-- Rotation Pattern -->
+                    <div class="form-group">
+                        <label>Rotation Pattern</label>
+                        <select id="rotationPatternSelect" class="form-control">
+                            <!-- Populated by JS based on industry -->
+                        </select>
+                    </div>
+                    <div id="rotationPatternInfo" class="pattern-info">
+                        <!-- Shows pattern description -->
+                    </div>
+
+                    <hr class="section-divider">
+
+                    <!-- Shift Codes -->
+                    <div class="form-group">
+                        <label>Shift Codes & Times</label>
+                    </div>
+                    <div id="shiftsList" class="shifts-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button id="addShiftBtn" class="btn btn-sm btn-secondary">+ Add Shift</button>
+                </section>
+
+                <!-- Staff Groups -->
+                <section class="config-section">
+                    <h3>5. Staff Groups & Employees</h3>
+
+                    <!-- Staff Presets -->
+                    <div class="staff-presets">
+                        <div class="form-group">
+                            <label>Load Saved Staff</label>
+                            <div class="preset-row">
+                                <select id="staffPresetSelect" class="form-control">
+                                    <option value="">-- Select saved staff --</option>
+                                </select>
+                                <button id="loadPresetBtn" class="btn btn-sm btn-outline" title="Load">Load</button>
+                                <button id="deletePresetBtn" class="btn btn-sm btn-outline" title="Delete" style="color: #ef4444;">×</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="preset-save-row">
+                                <input type="text" id="presetNameInput" class="form-control" placeholder="Preset name...">
+                                <button id="savePresetBtn" class="btn btn-sm btn-secondary">Save Current Staff</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="groupsList" class="groups-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button id="addGroupBtn" class="btn btn-sm btn-secondary">+ Add Group</button>
+                </section>
+
+                <!-- Unavailability -->
+                <section class="config-section">
+                    <h3>6. Staff Unavailability (Leave/TAD)</h3>
+                    <p class="section-hint">Set dates when staff cannot be scheduled</p>
+                    <div id="unavailabilitySection" class="unavailability-section">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button id="addUnavailabilityBtn" class="btn btn-sm btn-secondary">+ Add Time Off Entry</button>
+                </section>
+
+                <!-- Constraints -->
+                <section class="config-section">
+                    <h3>7. Scheduling Constraints</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Min Rest Hours</label>
+                            <input type="number" id="minRestHours" class="form-control" value="8" min="0" max="24">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Hours/Week</label>
+                            <input type="number" id="maxHoursWeek" class="form-control" value="60" min="20" max="80">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Max Consecutive Days</label>
+                            <input type="number" id="maxConsecutiveDays" class="form-control" value="6" min="1" max="14">
+                        </div>
+                        <div class="form-group">
+                            <label>Target Shifts/Person</label>
+                            <input type="number" id="targetShiftsPerPerson" class="form-control" value="10" min="1" max="31">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generate Button -->
+                <div class="config-actions">
+                    <button id="generateBtn" class="btn btn-primary btn-lg">Generate Schedule</button>
+                    <button id="regenerateBtn" class="btn btn-secondary">Regenerate (New Seed)</button>
+                </div>
+            </aside>
+
+            <!-- Schedule Display -->
+            <div class="schedule-container">
+                <!-- Action Bar -->
+                <div class="schedule-actions">
+                    <div class="action-group">
+                        <button id="exportCsvBtn" class="btn btn-outline" disabled>Export CSV</button>
+                        <button id="printBtn" class="btn btn-outline" disabled>Print / Save as PDF</button>
+                        <span class="print-hint" title="In print dialog, enable 'Background graphics' or 'Print backgrounds' for colors">ℹ️</span>
+                    </div>
+                    <div class="action-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="compactMode"> Compact Print Mode
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Warnings Panel -->
+                <div id="warningsPanel" class="warnings-panel hidden">
+                    <h4>⚠️ Warnings</h4>
+                    <ul id="warningsList"></ul>
+                </div>
+
+                <!-- Schedule Output -->
+                <div id="scheduleOutput" class="schedule-output">
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <h3>No Schedule Generated</h3>
+                        <p>Configure your settings and click "Generate Schedule" to create a roster.</p>
+                        <p class="hint">Or click "Load Hospital ED Example" to see a sample schedule.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Shift Code Editor Modal -->
+    <div id="shiftModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Shift</h3>
+                <button class="modal-close" onclick="closeShiftModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Shift Code (single letter)</label>
+                    <input type="text" id="modalShiftCode" class="form-control" maxlength="1" style="text-transform: uppercase;">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="modalShiftStart" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="modalShiftEnd" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description (optional)</label>
+                    <input type="text" id="modalShiftDesc" class="form-control" placeholder="e.g., Day Shift, Night Shift">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="modalShiftType" class="form-control">
+                        <option value="working">Working Shift</option>
+                        <option value="admin">Admin/Other</option>
+                        <option value="backup">Backup</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="color" id="modalShiftColor" class="form-control" value="#f5a623">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeShiftModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveShiftModal()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cell Edit Modal -->
+    <div id="cellModal" class="modal hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>Assign Shift</h3>
+                <button class="modal-close" onclick="closeCellModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="cellModalInfo"></p>
+                <div class="shift-buttons" id="shiftButtons">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Editor Modal -->
+    <div id="employeeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Employee</h3>
+                <button class="modal-close" onclick="closeEmployeeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="modalEmployeeName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Unavailability (Leave/TAD)</label>
+                    <div id="unavailabilityList" class="unavailability-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="btn btn-sm btn-secondary" onclick="addUnavailability()">+ Add Unavailability</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEmployeeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEmployeeModal()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

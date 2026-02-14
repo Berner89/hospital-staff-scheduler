@@ -317,45 +317,45 @@ function getIndustryDefaults(industry) {
     const defaults = {
         healthcare: {
             shifts: [
-                { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f5a623' },
-                { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#f5a623' },
-                { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#f5a623' },
-                { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#f5a623' },
-                { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#f5a623' },
-                { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#22c55e' },
+                { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f59e0b' },
+                { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6' },
+                { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af' },
+                { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#059669' },
+                { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#d97706' },
+                { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#10b981' },
                 { code: 'A', start: '', end: '', desc: 'Admin', type: 'admin', color: '#3b82f6' }
             ],
             constraints: { minRestHours: 8, maxHoursWeek: 60, maxConsecutiveDays: 6 }
         },
         manufacturing: {
             shifts: [
-                { code: 'D', start: '06:00', end: '14:00', desc: 'Day Shift', type: 'working', color: '#f5a623' },
-                { code: 'A', start: '14:00', end: '22:00', desc: 'Afternoon Shift', type: 'working', color: '#f5a623' },
-                { code: 'N', start: '22:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#f5a623' }
+                { code: 'D', start: '06:00', end: '14:00', desc: 'Day Shift', type: 'working', color: '#f59e0b' },
+                { code: 'A', start: '14:00', end: '22:00', desc: 'Afternoon Shift', type: 'working', color: '#8b5cf6' },
+                { code: 'N', start: '22:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af' }
             ],
             constraints: { minRestHours: 8, maxHoursWeek: 48, maxConsecutiveDays: 5 }
         },
         public_safety: {
             shifts: [
-                { code: 'D', start: '07:00', end: '19:00', desc: 'Day Shift', type: 'working', color: '#f5a623' },
-                { code: 'N', start: '19:00', end: '07:00', desc: 'Night Shift', type: 'working', color: '#f5a623' },
-                { code: 'R', start: '', end: '', desc: 'Reserve', type: 'backup', color: '#22c55e' }
+                { code: 'D', start: '07:00', end: '19:00', desc: 'Day Shift', type: 'working', color: '#f59e0b' },
+                { code: 'N', start: '19:00', end: '07:00', desc: 'Night Shift', type: 'working', color: '#1e40af' },
+                { code: 'R', start: '', end: '', desc: 'Reserve', type: 'backup', color: '#10b981' }
             ],
             constraints: { minRestHours: 12, maxHoursWeek: 56, maxConsecutiveDays: 4 }
         },
         retail: {
             shifts: [
-                { code: 'M', start: '06:00', end: '14:00', desc: 'Morning', type: 'working', color: '#f5a623' },
-                { code: 'D', start: '10:00', end: '18:00', desc: 'Day', type: 'working', color: '#f5a623' },
-                { code: 'E', start: '14:00', end: '22:00', desc: 'Evening', type: 'working', color: '#f5a623' },
-                { code: 'C', start: '18:00', end: '00:00', desc: 'Closing', type: 'working', color: '#f5a623' }
+                { code: 'M', start: '06:00', end: '14:00', desc: 'Morning', type: 'working', color: '#f59e0b' },
+                { code: 'D', start: '10:00', end: '18:00', desc: 'Day', type: 'working', color: '#059669' },
+                { code: 'E', start: '14:00', end: '22:00', desc: 'Evening', type: 'working', color: '#8b5cf6' },
+                { code: 'C', start: '18:00', end: '00:00', desc: 'Closing', type: 'working', color: '#1e40af' }
             ],
             constraints: { minRestHours: 10, maxHoursWeek: 40, maxConsecutiveDays: 5 }
         },
         other: {
             shifts: [
-                { code: 'D', start: '09:00', end: '17:00', desc: 'Day Shift', type: 'working', color: '#f5a623' },
-                { code: 'E', start: '17:00', end: '01:00', desc: 'Evening Shift', type: 'working', color: '#f5a623' }
+                { code: 'D', start: '09:00', end: '17:00', desc: 'Day Shift', type: 'working', color: '#f59e0b' },
+                { code: 'E', start: '17:00', end: '01:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6' }
             ],
             constraints: { minRestHours: 8, maxHoursWeek: 40, maxConsecutiveDays: 5 }
         }
@@ -615,7 +615,7 @@ function addShift() {
         end: '17:00',
         desc: '',
         type: 'working',
-        color: '#f5a623'
+        color: '#f59e0b'
     });
     renderShiftsList();
     renderCoverageGrid();
@@ -1265,6 +1265,7 @@ function generateSchedule() {
 function regenerateSchedule() {
     AppState.randomSeed = Date.now() + Math.random() * 1000000;
     runScheduler();
+    if (typeof umami !== 'undefined') umami.track('schedule-regenerated');
 }
 
 // Simple seeded random
@@ -1504,6 +1505,7 @@ function runScheduler() {
     AppState.shiftCounts = shiftCounts;
     saveToStorage();
     renderSchedule();
+    if (typeof umami !== 'undefined') umami.track('schedule-generated', { industry: AppState.industry, employees: getTotalEmployeeCount() });
 }
 
 // ============================================
@@ -1908,10 +1910,12 @@ function exportCSV() {
     a.download = `schedule_${AppState.departmentName.replace(/\s+/g, '_')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    if (typeof umami !== 'undefined') umami.track('csv-exported');
 }
 
 function printSchedule() {
     window.print();
+    if (typeof umami !== 'undefined') umami.track('print-triggered');
 }
 
 // ============================================
@@ -1927,12 +1931,12 @@ function loadHospitalExample() {
     AppState.coveragePreset = '24_7';
 
     AppState.shifts = [
-        { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f5a623', coverage: 1 },
-        { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#f5a623', coverage: 1 },
-        { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#f5a623', coverage: 1 },
-        { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#f5a623', coverage: 1 },
-        { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#f5a623', coverage: 1 },
-        { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#22c55e' },
+        { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 1 },
+        { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6', coverage: 1 },
+        { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af', coverage: 1 },
+        { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#059669', coverage: 1 },
+        { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#d97706', coverage: 1 },
+        { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#10b981' },
         { code: 'A', start: '', end: '', desc: 'Admin', type: 'admin', color: '#3b82f6' }
     ];
 
@@ -1990,6 +1994,7 @@ function loadHospitalExample() {
     saveToStorage();
     renderUI();
     generateSchedule();
+    if (typeof umami !== 'undefined') umami.track('example-loaded');
 }
 
 function clearAll() {

@@ -56,6 +56,12 @@ const AppState = {
     randomSeed: Date.now()
 };
 
+// HTML escape to prevent XSS
+function esc(str) {
+    if (str == null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 // Day of week abbreviations
 const DAY_ABBR = ['S', 'M', 'T', 'W', 'TH', 'F', 'S'];
 const DAY_NAMES = ['SU', 'M', 'T', 'W', 'TH', 'F', 'S'];
@@ -594,10 +600,10 @@ function renderShiftsList() {
         const item = document.createElement('div');
         item.className = 'shift-item';
         item.innerHTML = `
-            <div class="shift-code" style="background: ${shift.color}">${shift.code}</div>
+            <div class="shift-code" style="background: ${esc(shift.color)}">${esc(shift.code)}</div>
             <div class="shift-info">
-                <div>${shift.desc || shift.code}</div>
-                <div class="shift-times">${shift.start && shift.end ? `${shift.start} - ${shift.end}` : 'No fixed time'}</div>
+                <div>${esc(shift.desc || shift.code)}</div>
+                <div class="shift-times">${shift.start && shift.end ? `${esc(shift.start)} - ${esc(shift.end)}` : 'No fixed time'}</div>
             </div>
             <div class="shift-actions">
                 <button class="btn btn-sm btn-outline" onclick="editShift(${index})">Edit</button>
@@ -682,7 +688,7 @@ function renderGroupsList() {
             const hasUnavail = emp.unavailability && emp.unavailability.length > 0;
             employeesHtml += `
                 <div class="employee-item">
-                    <input type="text" value="${emp.name}"
+                    <input type="text" value="${esc(emp.name)}"
                         onchange="updateEmployeeName(${gIndex}, ${eIndex}, this.value)">
                     ${hasUnavail ? `<span class="unavail-indicator" onclick="editEmployee(${gIndex}, ${eIndex})">📅</span>` : ''}
                     <button class="btn btn-sm btn-outline" onclick="editEmployee(${gIndex}, ${eIndex})">⚙</button>
@@ -693,7 +699,7 @@ function renderGroupsList() {
 
         groupEl.innerHTML = `
             <div class="group-header">
-                <input type="text" class="form-control" value="${group.name}"
+                <input type="text" class="form-control" value="${esc(group.name)}"
                     onchange="updateGroupName(${gIndex}, this.value)">
                 <button class="btn btn-sm btn-outline" onclick="deleteGroup(${gIndex})">×</button>
             </div>
@@ -1057,7 +1063,7 @@ function renderUnavailabilitySection() {
         let employeeOptions = '';
         allEmployees.forEach(emp => {
             const selected = emp.gIndex === entry.gIndex && emp.eIndex === entry.eIndex;
-            employeeOptions += `<option value="${emp.gIndex}-${emp.eIndex}" ${selected ? 'selected' : ''}>${emp.name} (${emp.groupName})</option>`;
+            employeeOptions += `<option value="${emp.gIndex}-${emp.eIndex}" ${selected ? 'selected' : ''}>${esc(emp.name)} (${esc(emp.groupName)})</option>`;
         });
 
         entryEl.innerHTML = `
@@ -1195,11 +1201,11 @@ function renderCoverageGrid() {
         const defaultCoverage = getCoverageDefault(shift.code);
 
         row.innerHTML = `
-            <div class="shift-badge" style="background: ${shift.color}">${shift.code}</div>
-            <label>${shift.desc || shift.code}</label>
+            <div class="shift-badge" style="background: ${esc(shift.color)}">${esc(shift.code)}</div>
+            <label>${esc(shift.desc || shift.code)}</label>
             <input type="number" class="form-control" min="0" max="10"
                 value="${shift.coverage !== undefined ? shift.coverage : defaultCoverage}"
-                onchange="updateShiftCoverage('${shift.code}', this.value)">
+                onchange="updateShiftCoverage('${esc(shift.code)}', this.value)">
         `;
         container.appendChild(row);
     });
@@ -1542,7 +1548,7 @@ function renderSchedule() {
     let html = `
         <div class="roster-wrapper">
             <div class="roster-header">
-                <div class="roster-title">${AppState.departmentName || 'Staff Schedule'}</div>
+                <div class="roster-title">${esc(AppState.departmentName) || 'Staff Schedule'}</div>
                 <div class="roster-period">${periodText}</div>
             </div>
             <table class="roster-table">
@@ -1561,11 +1567,11 @@ function renderSchedule() {
 
     // Totals headers
     workingShifts.forEach(s => {
-        html += `<th class="totals-col totals-header">${s.code}</th>`;
+        html += `<th class="totals-col totals-header">${esc(s.code)}</th>`;
     });
     html += `<th class="totals-col totals-header total-main">Total</th>`;
     if (backupShift) {
-        html += `<th class="totals-col totals-header">${backupShift.code}</th>`;
+        html += `<th class="totals-col totals-header">${esc(backupShift.code)}</th>`;
     }
     html += `<th class="totals-col totals-header">Est</th>`;
 
@@ -1590,14 +1596,14 @@ function renderSchedule() {
     // Render each group
     AppState.groups.forEach((group, gIndex) => {
         // Group header row
-        html += `<tr class="group-row"><td colspan="${numDays + workingShifts.length + 3 + (backupShift ? 1 : 0)}">${group.name}</td></tr>`;
+        html += `<tr class="group-row"><td colspan="${numDays + workingShifts.length + 3 + (backupShift ? 1 : 0)}">${esc(group.name)}</td></tr>`;
 
         // Employee rows
         group.employees.forEach((emp, eIndex) => {
             const empId = `${gIndex}-${eIndex}`;
             const empSchedule = AppState.schedule[empId] || [];
 
-            html += `<tr class="employee-row"><td class="staff-col">${emp.name}</td>`;
+            html += `<tr class="employee-row"><td class="staff-col">${esc(emp.name)}</td>`;
 
             // Shift counts for this employee
             const counts = {};
@@ -1635,8 +1641,8 @@ function renderSchedule() {
                 }
 
                 // Use CSS classes for colors (better print support) - inline style as fallback for custom shifts
-                const inlineStyle = shift && !['D','E','N','S','F','B','A'].includes(shiftCode) ? `background: ${shift.color}` : '';
-                html += `<td class="${cellClass}" onclick="editCell('${empId}', ${d})" ${inlineStyle ? `style="${inlineStyle}"` : ''}>${cellContent}</td>`;
+                const inlineStyle = shift && !['D','E','N','S','F','B','A'].includes(shiftCode) ? `background: ${esc(shift.color)}` : '';
+                html += `<td class="${cellClass}" onclick="editCell('${esc(empId)}', ${d})" ${inlineStyle ? `style="${inlineStyle}"` : ''}>${cellContent}</td>`;
             }
 
             // Totals cells
@@ -1662,12 +1668,12 @@ function renderSchedule() {
     // Legend
     html += `<div class="roster-legend">`;
     AppState.shifts.forEach(shift => {
-        const timeStr = shift.start && shift.end ? `${shift.start}-${shift.end}` : '';
+        const timeStr = shift.start && shift.end ? `${esc(shift.start)}-${esc(shift.end)}` : '';
         const isStandardShift = ['D','E','N','S','F','B','A'].includes(shift.code);
-        const legendStyle = isStandardShift ? '' : `style="background: ${shift.color}"`;
+        const legendStyle = isStandardShift ? '' : `style="background: ${esc(shift.color)}"`;
         html += `<div class="legend-item">
-            <span class="legend-badge shift-${shift.code.toLowerCase()}" ${legendStyle}>${shift.code}</span>
-            <span>${timeStr} ${shift.desc ? `(${shift.desc})` : ''}</span>
+            <span class="legend-badge shift-${esc(shift.code.toLowerCase())}" ${legendStyle}>${esc(shift.code)}</span>
+            <span>${timeStr} ${shift.desc ? `(${esc(shift.desc)})` : ''}</span>
         </div>`;
     });
     html += `<div class="legend-item">
@@ -1701,8 +1707,8 @@ function renderCoverageFooter(numDays) {
 
         html += `<tr class="coverage-section">
             <td class="staff-col coverage-row-header">
-                <div>${shift.code} ${shift.start && shift.end ? `${shift.start}-${shift.end}` : ''}</div>
-                ${shift.desc ? `<div class="coverage-label">${shift.desc}</div>` : ''}
+                <div>${esc(shift.code)} ${shift.start && shift.end ? `${esc(shift.start)}-${esc(shift.end)}` : ''}</div>
+                ${shift.desc ? `<div class="coverage-label">${esc(shift.desc)}</div>` : ''}
             </td>`;
 
         let totalRequired = 0;
@@ -1749,7 +1755,7 @@ function renderCoverageFooter(numDays) {
     if (adminShift) {
         html += `<tr class="coverage-section">
             <td class="staff-col coverage-row-header" colspan="${numDays + workingShifts.length + 3 + (backupShift ? 1 : 0)}">
-                ${adminShift.code} = ${adminShift.desc || 'Admin'}
+                ${esc(adminShift.code)} = ${esc(adminShift.desc) || 'Admin'}
             </td>
         </tr>`;
     }
@@ -1768,7 +1774,7 @@ function renderWarnings() {
     }
 
     panel.classList.remove('hidden');
-    list.innerHTML = AppState.warnings.map(w => `<li>${w}</li>`).join('');
+    list.innerHTML = AppState.warnings.map(w => `<li>${esc(w)}</li>`).join('');
 }
 
 // ============================================
@@ -1792,9 +1798,9 @@ function editCell(empId, dayIndex) {
     AppState.shifts.forEach(shift => {
         const isActive = currentShift === shift.code;
         buttonsHtml += `
-            <button class="shift-btn ${isActive ? 'active' : ''}" onclick="assignShift('${shift.code}')" style="border-color: ${shift.color}">
-                <span class="code" style="color: ${shift.color}">${shift.code}</span>
-                <span class="label">${shift.desc || ''}</span>
+            <button class="shift-btn ${isActive ? 'active' : ''}" onclick="assignShift('${esc(shift.code)}')" style="border-color: ${esc(shift.color)}">
+                <span class="code" style="color: ${esc(shift.color)}">${esc(shift.code)}</span>
+                <span class="label">${esc(shift.desc || '')}</span>
             </button>
         `;
     });

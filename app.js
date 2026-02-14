@@ -475,6 +475,55 @@ function bindEvents() {
     document.getElementById('toggleConfig').addEventListener('click', () => {
         document.getElementById('configPanel').classList.toggle('collapsed');
     });
+
+    // Drag-and-drop delegation on scheduleOutput
+    const scheduleEl = document.getElementById('scheduleOutput');
+
+    scheduleEl.addEventListener('dragstart', (e) => {
+        const cell = e.target.closest('td.shift-cell');
+        if (!cell || swapMode) { e.preventDefault(); return; }
+        handleDragStart(e, cell);
+    });
+
+    scheduleEl.addEventListener('dragover', (e) => {
+        const cell = e.target.closest('td.shift-cell');
+        if (!cell || !dragSource) return;
+        e.preventDefault();
+        handleDragOver(e, cell);
+    });
+
+    scheduleEl.addEventListener('dragleave', (e) => {
+        const cell = e.target.closest('td.shift-cell');
+        if (!cell) return;
+        cell.classList.remove('drop-hover');
+    });
+
+    scheduleEl.addEventListener('drop', (e) => {
+        const cell = e.target.closest('td.shift-cell');
+        if (!cell) return;
+        e.preventDefault();
+        handleDrop(e, cell);
+    });
+
+    scheduleEl.addEventListener('dragend', () => {
+        cleanupDrag();
+    });
+
+    // Swap mode button
+    document.getElementById('swapBtn').addEventListener('click', () => {
+        if (swapMode) {
+            exitSwapMode();
+        } else {
+            enterSwapMode();
+        }
+    });
+
+    // ESC key to exit swap mode
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && swapMode) {
+            exitSwapMode();
+        }
+    });
 }
 
 function renderUI() {
@@ -888,6 +937,7 @@ function loadStaffPreset() {
     saveToStorage();
 
     // Reset schedule output
+    if (swapMode) exitSwapMode();
     document.getElementById('scheduleOutput').innerHTML = `
         <div class="empty-state">
             <div class="empty-icon">📅</div>
@@ -897,6 +947,7 @@ function loadStaffPreset() {
     `;
     document.getElementById('exportCsvBtn').disabled = true;
     document.getElementById('printBtn').disabled = true;
+    document.getElementById('swapBtn').disabled = true;
 }
 
 function deleteStaffPreset() {
@@ -1283,6 +1334,7 @@ function seededRandom(seed) {
 }
 
 function runScheduler() {
+    if (swapMode) exitSwapMode();
     const numDays = getDaysInPeriod();
     AppState.warnings = [];
 
@@ -1529,6 +1581,7 @@ function renderSchedule() {
     // Enable export buttons
     document.getElementById('exportCsvBtn').disabled = false;
     document.getElementById('printBtn').disabled = false;
+    document.getElementById('swapBtn').disabled = false;
 
     // Build header info
     let periodText = '';
@@ -1624,7 +1677,7 @@ function renderSchedule() {
                 if (shiftCode) {
                     if (shiftCode === 'LEAVE') {
                         cellClass += ' shift-leave';
-                        cellContent = 'LEAVE';
+                        cellContent = 'L';
                     } else if (shiftCode === 'TAD') {
                         cellClass += ' shift-tad';
                         cellContent = 'TAD';
@@ -1644,7 +1697,7 @@ function renderSchedule() {
 
                 // Use CSS classes for colors (better print support) - inline style as fallback for custom shifts
                 const inlineStyle = shift && !['D','E','N','S','F','B','A'].includes(shiftCode) ? `background: ${esc(shift.color)}` : '';
-                html += `<td class="${cellClass}" onclick="editCell('${esc(empId)}', ${d})" ${inlineStyle ? `style="${inlineStyle}"` : ''}>${cellContent}</td>`;
+                html += `<td class="${cellClass}" draggable="true" data-emp-id="${esc(empId)}" data-day="${d}" onclick="editCell('${esc(empId)}', ${d})" ${inlineStyle ? `style="${inlineStyle}"` : ''}>${cellContent}</td>`;
             }
 
             // Totals cells
@@ -1786,6 +1839,11 @@ function renderWarnings() {
 let currentEditCell = null;
 
 function editCell(empId, dayIndex) {
+    if (swapMode) {
+        handleSwapClick(empId, dayIndex);
+        return;
+    }
+
     currentEditCell = { empId, dayIndex };
 
     const emp = findEmployee(empId);
@@ -2183,6 +2241,7 @@ function loadIndustryExample() {
 
 function clearAll() {
     if (confirm('Clear all data and start fresh?')) {
+        if (swapMode) exitSwapMode();
         localStorage.removeItem('staffSchedulerState');
         AppState.groups = [];
         AppState.schedule = null;
@@ -2199,6 +2258,126 @@ function clearAll() {
         `;
         document.getElementById('exportCsvBtn').disabled = true;
         document.getElementById('printBtn').disabled = true;
+        document.getElementById('swapBtn').disabled = true;
+    }
+}
+
+// ============================================
+// DRAG-AND-DROP & SWAP MODE
+// ============================================
+
+let dragSource = null;
+let swapMode = false;
+let swapSource = null;
+
+function handleDragStart(e, cell) {
+    const empId = cell.dataset.empId;
+    const day = parseInt(cell.dataset.day);
+    dragSource = { empId, day };
+
+    cell.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+
+    // Mark valid drop targets
+    document.querySelectorAll('#scheduleOutput td.shift-cell').forEach(td => {
+        if (td !== cell) {
+            td.classList.add('drop-target-valid');
+        }
+    });
+}
+
+function handleDragOver(e, cell) {
+    if (!dragSource) return;
+    const empId = cell.dataset.empId;
+    const day = parseInt(cell.dataset.day);
+    if (empId === dragSource.empId && day === dragSource.day) return;
+    cell.classList.add('drop-hover');
+}
+
+function handleDrop(e, cell) {
+    if (!dragSource) return;
+    const targetEmpId = cell.dataset.empId;
+    const targetDay = parseInt(cell.dataset.day);
+
+    // Same cell = no-op
+    if (targetEmpId === dragSource.empId && targetDay === dragSource.day) {
+        cleanupDrag();
+        return;
+    }
+
+    // Swap values
+    const sourceVal = AppState.schedule[dragSource.empId][dragSource.day];
+    const targetVal = AppState.schedule[targetEmpId][targetDay];
+
+    AppState.schedule[dragSource.empId][dragSource.day] = targetVal;
+    AppState.schedule[targetEmpId][targetDay] = sourceVal;
+
+    saveToStorage();
+    cleanupDrag();
+    renderSchedule();
+}
+
+function cleanupDrag() {
+    dragSource = null;
+    document.querySelectorAll('#scheduleOutput .dragging').forEach(el => el.classList.remove('dragging'));
+    document.querySelectorAll('#scheduleOutput .drop-target-valid').forEach(el => el.classList.remove('drop-target-valid'));
+    document.querySelectorAll('#scheduleOutput .drop-hover').forEach(el => el.classList.remove('drop-hover'));
+}
+
+function enterSwapMode() {
+    if (!AppState.schedule) return;
+    swapMode = true;
+    swapSource = null;
+    document.getElementById('swapBtn').classList.add('active');
+    document.getElementById('swapBanner').classList.remove('hidden');
+    document.getElementById('scheduleOutput').classList.add('swap-mode-active');
+}
+
+function exitSwapMode() {
+    swapMode = false;
+    swapSource = null;
+    const btn = document.getElementById('swapBtn');
+    if (btn) btn.classList.remove('active');
+    const banner = document.getElementById('swapBanner');
+    if (banner) banner.classList.add('hidden');
+    const output = document.getElementById('scheduleOutput');
+    if (output) {
+        output.classList.remove('swap-mode-active');
+        output.querySelectorAll('.swap-selected').forEach(el => el.classList.remove('swap-selected'));
+    }
+}
+
+function handleSwapClick(empId, dayIndex) {
+    if (!swapSource) {
+        // First click - select source
+        swapSource = { empId, dayIndex };
+        const sourceCell = document.querySelector(
+            '#scheduleOutput td.shift-cell[data-emp-id="' + empId + '"][data-day="' + dayIndex + '"]'
+        );
+        if (sourceCell) sourceCell.classList.add('swap-selected');
+    } else {
+        // Self-click = deselect
+        if (swapSource.empId === empId && swapSource.dayIndex === dayIndex) {
+            const sourceCell = document.querySelector(
+                '#scheduleOutput td.shift-cell[data-emp-id="' + empId + '"][data-day="' + dayIndex + '"]'
+            );
+            if (sourceCell) sourceCell.classList.remove('swap-selected');
+            swapSource = null;
+            return;
+        }
+
+        // Execute swap
+        const sourceVal = AppState.schedule[swapSource.empId][swapSource.dayIndex];
+        const targetVal = AppState.schedule[empId][dayIndex];
+
+        AppState.schedule[swapSource.empId][swapSource.dayIndex] = targetVal;
+        AppState.schedule[empId][dayIndex] = sourceVal;
+
+        swapSource = null;
+        saveToStorage();
+        renderSchedule();
+        // Stay in swap mode for chaining
     }
 }
 
@@ -2222,6 +2401,7 @@ window.updateUnavailEnd = updateUnavailEnd;
 window.removeUnavailability = removeUnavailability;
 window.updateShiftCoverage = updateShiftCoverage;
 window.editCell = editCell;
+window.exitSwapMode = exitSwapMode;
 window.closeCellModal = closeCellModal;
 window.assignShift = assignShift;
 // Unavailability section functions

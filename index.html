@@ -228,12 +228,19 @@
                         <button id="exportCsvBtn" class="btn btn-outline" disabled>Export CSV</button>
                         <button id="printBtn" class="btn btn-outline" disabled>Print / Save as PDF</button>
                         <span class="print-hint" title="In print dialog, enable 'Background graphics' or 'Print backgrounds' for colors">ℹ️</span>
+                        <button id="swapBtn" class="btn btn-outline" disabled>Swap Shifts</button>
                     </div>
                     <div class="action-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="compactMode"> Compact Print Mode
                         </label>
                     </div>
+                </div>
+
+                <!-- Swap Mode Banner -->
+                <div id="swapBanner" class="swap-banner hidden">
+                    <span>Swap Mode: Click a source cell, then click a target cell to swap shifts.</span>
+                    <button class="btn btn-sm btn-outline" onclick="exitSwapMode()">Cancel</button>
                 </div>
 
                 <!-- Warnings Panel -->

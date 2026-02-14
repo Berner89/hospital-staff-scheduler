@@ -391,6 +391,7 @@ function bindEvents() {
         renderShiftsList();
         renderConstraints();
         renderCoverageGrid();
+        updateExampleButton();
         saveToStorage();
     });
 
@@ -457,7 +458,7 @@ function bindEvents() {
     document.getElementById('addUnavailabilityBtn').addEventListener('click', () => addUnavailabilityEntry());
     document.getElementById('generateBtn').addEventListener('click', () => generateSchedule());
     document.getElementById('regenerateBtn').addEventListener('click', () => regenerateSchedule());
-    document.getElementById('loadExampleBtn').addEventListener('click', () => loadHospitalExample());
+    document.getElementById('loadExampleBtn').addEventListener('click', () => loadIndustryExample());
     document.getElementById('clearAllBtn').addEventListener('click', () => clearAll());
     document.getElementById('exportCsvBtn').addEventListener('click', () => exportCSV());
     document.getElementById('printBtn').addEventListener('click', () => printSchedule());
@@ -496,6 +497,7 @@ function renderUI() {
     renderCoverageGrid();
     renderUnavailabilitySection();
     renderStaffPresetsDropdown();
+    updateExampleButton();
 
     // If we have a saved schedule, render it
     if (AppState.schedule) {
@@ -1928,79 +1930,255 @@ function printSchedule() {
 // EXAMPLE DATA
 // ============================================
 
-function loadHospitalExample() {
-    AppState.industry = 'healthcare';
+// ============================================
+// INDUSTRY EXAMPLES
+// ============================================
+
+const INDUSTRY_EXAMPLE_LABELS = {
+    healthcare: 'Load Hospital ED Example',
+    manufacturing: 'Load Factory Example',
+    public_safety: 'Load Fire Station Example',
+    retail: 'Load Retail Store Example',
+    other: 'Load Office Example'
+};
+
+function updateExampleButton() {
+    const btn = document.getElementById('loadExampleBtn');
+    btn.textContent = INDUSTRY_EXAMPLE_LABELS[AppState.industry] || 'Load Example';
+}
+
+function getIndustryExample(industry) {
+    const examples = {
+        healthcare: {
+            departmentName: 'Emergency Department',
+            coveragePreset: '24_7',
+            shifts: [
+                { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 1 },
+                { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6', coverage: 1 },
+                { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af', coverage: 1 },
+                { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#059669', coverage: 1 },
+                { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#d97706', coverage: 1 },
+                { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#10b981' },
+                { code: 'A', start: '', end: '', desc: 'Admin', type: 'admin', color: '#3b82f6' }
+            ],
+            groups: [
+                {
+                    name: 'TEAM ALPHA',
+                    employees: [
+                        { name: 'Johnson', unavailability: [] },
+                        { name: 'Martinez', unavailability: [] },
+                        { name: 'Chen', unavailability: [] },
+                        { name: 'Williams', unavailability: [{ type: 'LEAVE', startDate: '2025-05-20', endDate: '2025-05-20' }] },
+                        { name: 'Thompson', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'TEAM BRAVO',
+                    employees: [
+                        { name: 'Garcia', unavailability: [] },
+                        { name: 'Rodriguez', unavailability: [] },
+                        { name: 'Kim', unavailability: [{ type: 'LEAVE', startDate: '2025-05-06', endDate: '2025-05-08' }] },
+                        { name: 'Davis', unavailability: [{ type: 'TAD', startDate: '2025-05-08', endDate: '2025-05-10' }] },
+                        { name: 'Wilson', unavailability: [] },
+                        { name: 'Patel', unavailability: [] },
+                        { name: 'Anderson', unavailability: [
+                            { type: 'LEAVE', startDate: '2025-05-03', endDate: '2025-05-04' },
+                            { type: 'TAD', startDate: '2025-05-06', endDate: '2025-05-06' },
+                            { type: 'LEAVE', startDate: '2025-05-12', endDate: '2025-05-14' }
+                        ]},
+                        { name: 'Taylor', unavailability: [] },
+                        { name: 'Brown', unavailability: [] },
+                        { name: 'Mitchell', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'PHYSICIAN ASSISTANTS',
+                    employees: [
+                        { name: 'Clark', unavailability: [{ type: 'LEAVE', startDate: '2025-05-02', endDate: '2025-05-04' }] },
+                        { name: 'Lewis', unavailability: [] },
+                        { name: 'Robinson', unavailability: [] }
+                    ]
+                }
+            ],
+            constraints: { minRestHours: 8, maxHoursWeek: 60, maxConsecutiveDays: 6, targetShiftsPerPerson: 14 }
+        },
+        manufacturing: {
+            departmentName: 'Assembly Line A',
+            coveragePreset: '24_7',
+            shifts: [
+                { code: 'D', start: '06:00', end: '14:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 2 },
+                { code: 'A', start: '14:00', end: '22:00', desc: 'Afternoon Shift', type: 'working', color: '#8b5cf6', coverage: 2 },
+                { code: 'N', start: '22:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af', coverage: 2 }
+            ],
+            groups: [
+                {
+                    name: 'SHIFT CREW 1',
+                    employees: [
+                        { name: 'Adams', unavailability: [] },
+                        { name: 'Baker', unavailability: [{ type: 'LEAVE', startDate: '2025-05-12', endDate: '2025-05-14' }] },
+                        { name: 'Carter', unavailability: [] },
+                        { name: 'Dixon', unavailability: [] },
+                        { name: 'Evans', unavailability: [] },
+                        { name: 'Foster', unavailability: [{ type: 'TAD', startDate: '2025-05-19', endDate: '2025-05-20' }] }
+                    ]
+                },
+                {
+                    name: 'SHIFT CREW 2',
+                    employees: [
+                        { name: 'Grant', unavailability: [] },
+                        { name: 'Hayes', unavailability: [] },
+                        { name: 'Irving', unavailability: [{ type: 'LEAVE', startDate: '2025-05-05', endDate: '2025-05-07' }] },
+                        { name: 'Jensen', unavailability: [] },
+                        { name: 'Kane', unavailability: [] },
+                        { name: 'Lee', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'SUPERVISORS',
+                    employees: [
+                        { name: 'Morgan', unavailability: [] },
+                        { name: 'Nelson', unavailability: [{ type: 'LEAVE', startDate: '2025-05-26', endDate: '2025-05-28' }] },
+                        { name: 'Ortiz', unavailability: [] }
+                    ]
+                }
+            ],
+            constraints: { minRestHours: 8, maxHoursWeek: 48, maxConsecutiveDays: 5, targetShiftsPerPerson: 15 }
+        },
+        public_safety: {
+            departmentName: 'Fire Station 12',
+            coveragePreset: '24_7',
+            shifts: [
+                { code: 'D', start: '07:00', end: '19:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 2 },
+                { code: 'N', start: '19:00', end: '07:00', desc: 'Night Shift', type: 'working', color: '#1e40af', coverage: 2 },
+                { code: 'R', start: '', end: '', desc: 'Reserve', type: 'backup', color: '#10b981' }
+            ],
+            groups: [
+                {
+                    name: 'ENGINE COMPANY',
+                    employees: [
+                        { name: 'Palmer', unavailability: [] },
+                        { name: 'Quinn', unavailability: [{ type: 'LEAVE', startDate: '2025-05-10', endDate: '2025-05-12' }] },
+                        { name: 'Reeves', unavailability: [] },
+                        { name: 'Santos', unavailability: [] },
+                        { name: 'Tucker', unavailability: [] },
+                        { name: 'Vaughn', unavailability: [{ type: 'TAD', startDate: '2025-05-15', endDate: '2025-05-16' }] }
+                    ]
+                },
+                {
+                    name: 'LADDER COMPANY',
+                    employees: [
+                        { name: 'Walsh', unavailability: [] },
+                        { name: 'Young', unavailability: [] },
+                        { name: 'Bell', unavailability: [{ type: 'LEAVE', startDate: '2025-05-19', endDate: '2025-05-21' }] },
+                        { name: 'Cooper', unavailability: [] },
+                        { name: 'Dean', unavailability: [] },
+                        { name: 'Ford', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'RESCUE SQUAD',
+                    employees: [
+                        { name: 'Gibson', unavailability: [] },
+                        { name: 'Harper', unavailability: [{ type: 'TAD', startDate: '2025-05-06', endDate: '2025-05-07' }] },
+                        { name: 'Ingram', unavailability: [] },
+                        { name: 'Jordan', unavailability: [] }
+                    ]
+                }
+            ],
+            constraints: { minRestHours: 12, maxHoursWeek: 56, maxConsecutiveDays: 4, targetShiftsPerPerson: 10 }
+        },
+        retail: {
+            departmentName: 'Downtown Store',
+            coveragePreset: '8x5',
+            shifts: [
+                { code: 'M', start: '06:00', end: '14:00', desc: 'Morning', type: 'working', color: '#f59e0b', coverage: 1 },
+                { code: 'D', start: '10:00', end: '18:00', desc: 'Day', type: 'working', color: '#059669', coverage: 2 },
+                { code: 'E', start: '14:00', end: '22:00', desc: 'Evening', type: 'working', color: '#8b5cf6', coverage: 1 },
+                { code: 'C', start: '18:00', end: '00:00', desc: 'Closing', type: 'working', color: '#1e40af', coverage: 1 }
+            ],
+            groups: [
+                {
+                    name: 'FLOOR STAFF',
+                    employees: [
+                        { name: 'Kelly', unavailability: [] },
+                        { name: 'Long', unavailability: [{ type: 'LEAVE', startDate: '2025-05-08', endDate: '2025-05-10' }] },
+                        { name: 'Moore', unavailability: [] },
+                        { name: 'Nash', unavailability: [] },
+                        { name: 'Owen', unavailability: [] },
+                        { name: 'Price', unavailability: [{ type: 'LEAVE', startDate: '2025-05-22', endDate: '2025-05-23' }] }
+                    ]
+                },
+                {
+                    name: 'CASHIERS',
+                    employees: [
+                        { name: 'Reid', unavailability: [] },
+                        { name: 'Stone', unavailability: [] },
+                        { name: 'Torres', unavailability: [{ type: 'TAD', startDate: '2025-05-14', endDate: '2025-05-14' }] },
+                        { name: 'Upton', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'STOCKROOM',
+                    employees: [
+                        { name: 'Vale', unavailability: [] },
+                        { name: 'Weber', unavailability: [] },
+                        { name: 'York', unavailability: [{ type: 'LEAVE', startDate: '2025-05-26', endDate: '2025-05-28' }] }
+                    ]
+                }
+            ],
+            constraints: { minRestHours: 10, maxHoursWeek: 40, maxConsecutiveDays: 5, targetShiftsPerPerson: 10 }
+        },
+        other: {
+            departmentName: 'Operations Team',
+            coveragePreset: '8x5',
+            shifts: [
+                { code: 'D', start: '09:00', end: '17:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 1 },
+                { code: 'E', start: '17:00', end: '01:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6', coverage: 1 }
+            ],
+            groups: [
+                {
+                    name: 'TEAM A',
+                    employees: [
+                        { name: 'Abbott', unavailability: [] },
+                        { name: 'Blake', unavailability: [{ type: 'LEAVE', startDate: '2025-05-05', endDate: '2025-05-07' }] },
+                        { name: 'Cross', unavailability: [] },
+                        { name: 'Drake', unavailability: [] },
+                        { name: 'Ellis', unavailability: [] }
+                    ]
+                },
+                {
+                    name: 'TEAM B',
+                    employees: [
+                        { name: 'Flynn', unavailability: [] },
+                        { name: 'Hart', unavailability: [{ type: 'TAD', startDate: '2025-05-19', endDate: '2025-05-20' }] },
+                        { name: 'Irwin', unavailability: [] },
+                        { name: 'James', unavailability: [] },
+                        { name: 'Kent', unavailability: [] }
+                    ]
+                }
+            ],
+            constraints: { minRestHours: 8, maxHoursWeek: 40, maxConsecutiveDays: 5, targetShiftsPerPerson: 10 }
+        }
+    };
+    return examples[industry] || examples.other;
+}
+
+function loadIndustryExample() {
+    const example = getIndustryExample(AppState.industry);
     AppState.calendarStyle = 'monthly';
-    AppState.departmentName = 'Emergency Department';
+    AppState.departmentName = example.departmentName;
     AppState.month = 4; // May
     AppState.year = 2025;
-    AppState.coveragePreset = '24_7';
-
-    AppState.shifts = [
-        { code: 'D', start: '06:00', end: '16:00', desc: 'Day Shift', type: 'working', color: '#f59e0b', coverage: 1 },
-        { code: 'E', start: '14:00', end: '00:00', desc: 'Evening Shift', type: 'working', color: '#8b5cf6', coverage: 1 },
-        { code: 'N', start: '20:00', end: '06:00', desc: 'Night Shift', type: 'working', color: '#1e40af', coverage: 1 },
-        { code: 'S', start: '11:00', end: '21:00', desc: 'Swing Shift', type: 'working', color: '#059669', coverage: 1 },
-        { code: 'F', start: '09:00', end: '19:00', desc: 'Flex Shift', type: 'working', color: '#d97706', coverage: 1 },
-        { code: 'B', start: '', end: '', desc: 'Backup', type: 'backup', color: '#10b981' },
-        { code: 'A', start: '', end: '', desc: 'Admin', type: 'admin', color: '#3b82f6' }
-    ];
-
-    AppState.groups = [
-        {
-            name: 'NAVY',
-            employees: [
-                { name: 'Christensen', unavailability: [] },
-                { name: 'Denny', unavailability: [] },
-                { name: 'Goss', unavailability: [] },
-                { name: 'Studer', unavailability: [{ type: 'LEAVE', startDate: '2025-05-20', endDate: '2025-05-20' }] },
-                { name: 'Sangiorgi', unavailability: [] }
-            ]
-        },
-        {
-            name: 'MARINES',
-            employees: [
-                { name: 'Bardinelli', unavailability: [] },
-                { name: 'Beville', unavailability: [] },
-                { name: 'Chu', unavailability: [{ type: 'LEAVE', startDate: '2025-05-06', endDate: '2025-05-08' }] },
-                { name: 'Dodson', unavailability: [{ type: 'TAD', startDate: '2025-05-08', endDate: '2025-05-10' }] },
-                { name: 'Noyes', unavailability: [] },
-                { name: 'Thompson', unavailability: [] },
-                { name: 'Vandelune', unavailability: [
-                    { type: 'LEAVE', startDate: '2025-05-03', endDate: '2025-05-04' },
-                    { type: 'TAD', startDate: '2025-05-06', endDate: '2025-05-06' },
-                    { type: 'LEAVE', startDate: '2025-05-12', endDate: '2025-05-14' },
-                    { type: 'TAD', startDate: '2025-05-21', endDate: '2025-05-21' },
-                    { type: 'TAD', startDate: '2025-05-27', endDate: '2025-05-27' }
-                ]},
-                { name: 'Yue', unavailability: [] },
-                { name: 'Parker (MEU)', unavailability: [] },
-                { name: 'Aubuchon (MEU)', unavailability: [] }
-            ]
-        },
-        {
-            name: 'PHYSICIAN ASSISTANTS',
-            employees: [
-                { name: 'Kliment', unavailability: [{ type: 'LEAVE', startDate: '2025-05-02', endDate: '2025-05-04' }] },
-                { name: 'Ordonez', unavailability: [] },
-                { name: 'Williams', unavailability: [] }
-            ]
-        }
-    ];
-
-    AppState.constraints = {
-        minRestHours: 8,
-        maxHoursWeek: 60,
-        maxConsecutiveDays: 6,
-        targetShiftsPerPerson: 14
-    };
-
+    AppState.coveragePreset = example.coveragePreset;
+    AppState.shifts = JSON.parse(JSON.stringify(example.shifts));
+    AppState.groups = JSON.parse(JSON.stringify(example.groups));
+    AppState.constraints = { ...example.constraints };
     AppState.schedule = null;
 
     saveToStorage();
     renderUI();
     generateSchedule();
-    if (typeof umami !== 'undefined') umami.track('example-loaded');
+    if (typeof umami !== 'undefined') umami.track('example-loaded', { industry: AppState.industry });
 }
 
 function clearAll() {
@@ -2016,7 +2194,7 @@ function clearAll() {
                 <div class="empty-icon">📅</div>
                 <h3>No Schedule Generated</h3>
                 <p>Configure your settings and click "Generate Schedule" to create a roster.</p>
-                <p class="hint">Or click "Load Hospital ED Example" to see a sample schedule.</p>
+                <p class="hint">Or click the "Load Example" button to see a sample schedule.</p>
             </div>
         `;
         document.getElementById('exportCsvBtn').disabled = true;
